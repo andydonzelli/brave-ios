@@ -17,6 +17,8 @@ import Deferred
 import Data
 import BraveShared
 import SwiftKeychainWrapper
+import BraveRewardsUI
+import BraveRewards
 
 private let log = Logger.browserLogger
 
@@ -132,6 +134,8 @@ class BrowserViewController: UIViewController {
     // Web filters
     
     let safeBrowsing: SafeBrowsing?
+    
+    let rewards: BraveRewards?
 
     init(profile: Profile, tabManager: TabManager, crashedLastSession: Bool,
          safeBrowsingManager: SafeBrowsing? = SafeBrowsing()) {
@@ -140,6 +144,13 @@ class BrowserViewController: UIViewController {
         self.readerModeCache = ReaderMode.cache(for: tabManager.selectedTab)
         self.crashedLastSession = crashedLastSession
         self.safeBrowsing = safeBrowsingManager
+        
+        #if NO_REWARDS
+        rewards = nil
+        #else
+        rewards = BraveRewards(configuration: .default)
+        #endif
+
         super.init(nibName: nil, bundle: nil)
         didInit()
     }
@@ -1616,6 +1627,10 @@ extension BrowserViewController: TopToolbarDelegate {
         }
         let popover = PopoverController(contentController: shields, contentSizeBehavior: .preferredContentSize)
         popover.present(from: topToolbar.locationView.shieldsButton, on: self)
+    }
+    
+    func topToolbarDidTapBraveRewardsButton(_ topToolbar: TopToolbarView) {
+        showBraveRewardsPanel()
     }
     
     func topToolbarDidTapMenuButton(_ topToolbar: TopToolbarView) {
