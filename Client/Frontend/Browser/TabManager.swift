@@ -255,11 +255,13 @@ class TabManager: NSObject {
             let rewards = appDelegate.browserViewController.rewards,
             let newSelectedTab = tab, let previousTab = previous, let newTabUrl = newSelectedTab.url, let previousTabUrl = previousTab.url else { return }
         
-        rewards.reportTabUpdated(Int(previousTab.rewardsId), url: previousTabUrl, isSelected: false,
-                                 isPrivate: previousTab.isPrivate)
+        if !PrivateBrowsingManager.shared.isPrivateBrowsing {
+            rewards.reportTabUpdated(Int(previousTab.rewardsId), url: previousTabUrl, isSelected: false,
+                                    isPrivate: previousTab.isPrivate)
         
-        rewards.reportTabUpdated(Int(newSelectedTab.rewardsId), url: newTabUrl, isSelected: true,
-                                 isPrivate: newSelectedTab.isPrivate)
+            rewards.reportTabUpdated(Int(newSelectedTab.rewardsId), url: newTabUrl, isSelected: true,
+                                    isPrivate: newSelectedTab.isPrivate)
+        }
     }
 
     //Called by other classes to signal that they are entering/exiting private mode

@@ -279,7 +279,9 @@ class Tab: NSObject {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
             let rewards = appDelegate.browserViewController.rewards else { return }
         
-        rewards.reportTabClosed(tabId: rewardsId)
+        if !PrivateBrowsingManager.shared.isPrivateBrowsing {
+            rewards.reportTabClosed(tabId: rewardsId)
+        }
     }
 
     var loading: Bool {
@@ -371,7 +373,10 @@ class Tab: NSObject {
     func reportPageLoad() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
             let rewards = appDelegate.browserViewController.rewards,
-            let webView = webView, let url = webView.url, !url.isLocal else { return }
+            let webView = webView,
+            let url = webView.url,
+            !url.isLocal,
+            !PrivateBrowsingManager.shared.isPrivateBrowsing else { return }
         
         let getHtmlToStringJSCall = "document.documentElement.outerHTML.toString()"
         let tabId = rewardsId
